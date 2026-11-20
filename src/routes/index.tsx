@@ -11,7 +11,7 @@ export const Route = createFileRoute("/")({
       { title: "German A1 Foundation Check | Globio" },
       { name: "description", content: "Take Globio's free 15-question German A1 diagnostic on vocabulary, grammar and reading." },
       { property: "og:title", content: "German A1 Foundation Check | Globio" },
-      { property: "og:description", content: "Check your German A1 vocabulary, grammar and reading in about 10 minutes." },
+      { property: "og:description", content: "Check your German A1 vocabulary, grammar and reading in about 5–10 minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -69,7 +69,7 @@ function Intro({ onStart }: { onStart: () => void }) {
   return (
     <section className="space-y-6">
       <h1 className="text-3xl font-bold text-primary">Are your German A1 foundations ready?</h1>
-      <p className="text-muted-foreground">A short diagnostic of 15 questions covering vocabulary, grammar and reading. It takes about 10 minutes and shows where to focus next.</p>
+      <p className="text-muted-foreground">A short diagnostic of 15 questions covering vocabulary, grammar and reading. It takes about 5–10 minutes and shows where to focus next.</p>
       <div className="grid gap-3 sm:grid-cols-3">
         {SECTIONS.map((s) => (
           <div key={s} className="rounded-xl border border-border bg-card p-4">
@@ -185,6 +185,7 @@ function Results({ score, analysis, onRestart }: { score: ScoreResult; analysis:
         </div>
       )}
       <div className="rounded-xl border border-accent bg-card p-4 text-sm"><span className="font-semibold">Next step: </span>{copy.nextStep}</div>
+      <a href="https://globio.ai/german-mock-test/" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:opacity-90">Explore Globio full mock evaluations</a>
       <Btn variant="ghost" onClick={onRestart}>Retake the check</Btn>
     </section>
   );
