@@ -51,17 +51,20 @@ export const analyseAssessment = createServerFn({ method: "POST" })
       overall: { correct: score.totalCorrect, total: score.totalQuestions, percentage: Math.round(score.overallPercentage) },
       skills: score.skills,
       readiness: READINESS_COPY[score.readiness].label,
-      responses: QUESTIONS.map((q) => ({
+      responses: QUESTIONS.map((q) => {
+        const sel = answers[q.question_id];
+        return {
         question_id: q.question_id,
         section: q.section,
         question_text: q.question_text,
         correct_answer: q.options[q.correct_answer],
-        selected_answer: q.options[answers[q.question_id]],
-        is_correct: answers[q.question_id] === q.correct_answer,
+        selected_answer: sel ? q.options[sel] : "",
+        is_correct: sel === q.correct_answer,
         competency_tag: q.competency_tag,
         explanation: q.explanation,
-        recommendation_hint: RECOMMENDATIONS[q.recommendation_id].practice_activity,
-      })),
+        recommendation_hint: RECOMMENDATIONS[q.recommendation_id]?.practice_activity ?? "",
+        };
+      }),
     };
 
     try {

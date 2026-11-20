@@ -31,23 +31,23 @@ const banned = /\b(will pass|will fail|guarantee|garantiert|official score|liste
 export function validateAnalysis(raw: unknown, score: ScoreResult): Analysis | null {
   if (!raw || typeof raw !== "object") return null;
   const r = raw as Record<string, unknown>;
-  const summary = str(r.performance_summary, 900);
-  const nextStep = str(r.next_step, 400);
+  const summary = str(r["performance_summary"], 900);
+  const nextStep = str(r["next_step"], 400);
   if (!summary || !nextStep || banned.test(summary) || banned.test(nextStep)) return null;
 
   const wrong = score.incorrectCompetencies.map((c) => c.toLowerCase());
   const seen = new Set<string>();
   const recs: AnalysisRecommendation[] = [];
-  for (const item of Array.isArray(r.recommendations) ? r.recommendations : []) {
+  for (const item of (Array.isArray(r["recommendations"]) ? (r["recommendations"] as unknown[]) : [])) {
     if (!item || typeof item !== "object") continue;
     const o = item as Record<string, unknown>;
-    const competency = str(o.competency, 120);
+    const competency = str(o["competency"], 120);
     const rec = {
       competency: competency ?? "",
-      identified_gap: str(o.identified_gap) ?? "",
-      reason: str(o.reason) ?? "",
-      practice_activity: str(o.practice_activity) ?? "",
-      next_action: str(o.next_action) ?? "",
+      identified_gap: str(o["identified_gap"]) ?? "",
+      reason: str(o["reason"]) ?? "",
+      practice_activity: str(o["practice_activity"]) ?? "",
+      next_action: str(o["next_action"]) ?? "",
     };
     if (!competency || Object.values(rec).some((v) => !v)) continue;
     const key = competency.toLowerCase();
@@ -62,9 +62,9 @@ export function validateAnalysis(raw: unknown, score: ScoreResult): Analysis | n
 
   return {
     performance_summary: summary,
-    identified_strengths: strArr(r.identified_strengths),
-    identified_weaknesses: strArr(r.identified_weaknesses),
-    recurring_error_patterns: strArr(r.recurring_error_patterns),
+    identified_strengths: strArr(r["identified_strengths"]),
+    identified_weaknesses: strArr(r["identified_weaknesses"]),
+    recurring_error_patterns: strArr(r["recurring_error_patterns"]),
     recommendations: recs,
     next_step: nextStep,
   };
@@ -84,12 +84,13 @@ export function buildFallback(score: ScoreResult, _answers?: Answers): Analysis 
     if (seen.has(q.recommendation_id) || recs.length === 3) continue;
     seen.add(q.recommendation_id);
     const r = RECOMMENDATIONS[q.recommendation_id];
+    if (!r) continue;
     recs.push({
       competency: q.competency_tag,
       identified_gap: `Question ${q.question_id.slice(1)} (${SECTION_LABELS[q.section]}) was answered incorrectly.`,
       reason: q.explanation,
-      practice_activity: r.practice_activity,
-      next_action: r.next_action,
+      practice_activity: r["practice_activity"],
+      next_action: r["next_action"],
     });
   }
   const strengths = skillNames(score, (p) => p >= 80);
